@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>systemcheck01 - Shield Cybersecurity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Custom Tailwind Configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neon-green': 'var(--neon-green)',
+                        'dark-bg': 'var(--dark-bg)',
+                        'dark-card-bg': 'var(--dark-card-bg)',
+                        'dark-border': 'var(--dark-border)',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%, 100%': { textShadow: '0 0 5px var(--neon-green), 0 0 15px var(--neon-green), 0 0 25px var(--neon-green)' },
+                            '50%': { textShadow: '0 0 10px var(--neon-green), 0 0 25px var(--neon-green), 0 0 40px var(--neon-green)' },
+                        },
+                        'pulse-border': {
+                            '0%, 100%': { borderColor: 'rgba(57, 255, 20, 0.4)' },
+                            '50%': { borderColor: 'rgba(57, 255, 20, 0.8)' },
+                        }
+                    },
+                    animation: {
+                        glow: 'glow 1.5s ease-in-out infinite alternate',
+                        'pulse-border': 'pulse-border 2s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom CSS Variables */
+        :root {
+            --neon-green: #39FF14;
+            --dark-bg: #0A0A0A;
+            --dark-card-bg: rgba(255, 255, 255, 0.03); /* Slightly transparent white for glassmorphism */
+            --dark-border: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Base styles and custom utilities */
+        @layer base {
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--dark-bg);
+                color: #e0e0e0; /* Light gray text for readability */
+                overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+            }
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Montserrat', sans-serif;
+                color: #ffffff;
+            }
+        }
+
+        /* Custom utility classes for easier Tailwind integration */
+        .text-neon-green { color: var(--neon-green); }
+        .bg-neon-green { background-color: var(--neon-green); }
+        .border-neon-green { border-color: var(--neon-green); }
+        .shadow-neon { box-shadow: 0 0 15px var(--neon-green); }
+        .shadow-neon-lg { box-shadow: 0 0 30px var(--neon-green); }
+
+        /* Hero Section Background & Overlay */
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://source.unsplash.com/random/1920x1080?cybersecurity,network,abstract,code,dark');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.3) contrast(1.2); /* Darken and add contrast for a techy feel */
+            transform: scale(1.05); /* Slightly scale to ensure full coverage and slight parallax effect with scroll */
+            z-index: -1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Radial gradient to darken edges and focus on center */
+            background: radial-gradient(circle at center, rgba(10, 10, 10, 0.1) 0%, rgba(10, 10, 10, 0.9) 70%, rgba(10, 10, 10, 1) 100%);
+            z-index: -1;
+        }
+
+        /* Scroll reveal animation styles */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile navigation specific styles */
+        #mobile-menu {
+            display: none; /* Hidden by default */
+        }
+        @media (max-width: 768px) {
+            #main-nav {
+                display: none; /* Hide desktop nav */
+            }
+            #mobile-menu-button {
+                display: block; /* Show hamburger button */
+            }
+            #mobile-menu.active {
+                display: flex; /* Show mobile menu when active */
+                flex-direction: column;
+                position: absolute;
+                top: 100%; /* Position below navbar */
+                left: 0;
+                width: 100%;
+                background-color: rgba(10, 10, 10, 0.9); /* Dark semi-transparent background */
+                backdrop-filter: blur(10px); /* Glassmorphism effect */
+                border-top: 1px solid var(--dark-border);
+                padding: 1rem 0;
+                z-index: 40; /* Ensure it's above other content but below navbar */
+            }
+            #mobile-menu a {
+                padding: 0.75rem 1.5rem;
+                text-align: center;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+            #mobile-menu a:last-child {
+                border-bottom: none;
+            }
+        }
+        @media (min-width: 769px) {
+            #mobile-menu-button {
+                display: none; /* Hide hamburger button on desktop */
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-bg font-inter text-gray-200 antialiased">
+
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-dark-bg/50 backdrop-blur-lg border-b border-dark-border shadow-lg">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center relative">
+            <a href="#hero" class="text-3xl font-montserrat font-extrabold text-white animate-glow tracking-tight">
+                systemcheck<span class="text-neon-green">01</span>
+            </a>
+
+            <div id="main-nav" class="hidden md:flex space-x-8 items-center">
+                <a href="#hero" class="text-gray-300 hover:text-neon-green transition-colors duration-300 relative group">
+                    Home
+                    <span class="absolute left-0 bottom-0 w-full h-0.5 bg-neon-green scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                </a>
+                <a href="#features" class="text-gray-300 hover:text-neon-green transition-colors duration-300 relative group">
+                    Features
+                    <span class="absolute left-0 bottom-0 w-full h-0.5 bg-neon-green scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                </a>
+                <a href="#cta" class="px-6 py-2 bg-neon-green text-dark-bg font-semibold rounded-full shadow-neon hover:shadow-neon-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105">
+                    Get Started
+                </a>
+            </div>
+
+            <button id="mobile-menu-button" class="md:hidden text-gray-300 text-2xl focus:outline-none" aria-label="Toggle mobile menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden flex-col items-center pb-4 md:hidden">
+            <a href="#hero" class="text-gray-300 hover:text-neon-green transition-colors duration-300 w-full py-3">Home</a>
+            <a href="#features" class="text-gray-300 hover:text-neon-green transition-colors duration-300 w-full py-3">Features</a>
+            <a href="#cta" class="px-6 py-2 bg-neon-green text-dark-bg font-semibold rounded-full shadow-neon hover:shadow-neon-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105 mt-4">
+                Get Started
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="relative min-h-screen flex items-center justify-center text-center overflow-hidden pt-24 md:pt-0">
+            <div class="hero-background"></div>
+            <div class="hero-overlay"></div>
+
+            <div class="relative z-10 px-4 max-w-4xl mx-auto scroll-reveal">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-montserrat font-extrabold leading-tight text-white mb-6 animate-glow">
+                    <span class="text-neon-green">Shield</span> Your Digital Fortress.
+                </h1>
+                <p class="text-lg sm:text-xl lg:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Unbreakable Cybersecurity. Advanced Threat Protection for a Safer Tomorrow.
+                </p>
+                <a href="#cta" class="inline-block px-10 py-4 bg-neon-green text-dark-bg font-bold text-lg rounded-full shadow-neon hover:shadow-neon-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105">
+                    Start Protecting Now
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-16 md:py-24 bg-dark-bg relative">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16 scroll-reveal delay-0">
+                    <h2 class="text-4xl font-montserrat font-bold text-white mb-4">
+                        Why Choose <span class="text-neon-green">Shield</span>?
+                    </h2>
+                    <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                        Discover the cutting-edge features that make Shield the ultimate choice for your cybersecurity needs.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-100">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">Real-time Threat Detection</h3>
+                        <p class="text-gray-300">
+                            Our advanced AI constantly monitors for threats, providing instant protection against malware, phishing, and ransomware.
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-200">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">Identity Protection</h3>
+                        <p class="text-gray-300">
+                            Secure your personal information and online identity with our robust encryption and authentication protocols.
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-300">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">Secure Browsing</h3>
+                        <p class="text-gray-300">
+                            Browse the web with confidence. Shield blocks malicious websites and suspicious downloads automatically.
+                        </p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-400">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">Encrypted Cloud Storage</h3>
+                        <p class="text-gray-300">
+                            Keep your most sensitive files safe with our military-grade encrypted cloud storage solution.
+                        </p>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-500">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">Network Monitoring</h3>
+                        <p class="text-gray-300">
+                            Gain insights into your network activity and identify vulnerabilities before they can be exploited.
+                        </p>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="bg-dark-card-bg backdrop-blur-sm p-8 rounded-xl border border-dark-border hover:border-neon-green transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-neon scroll-reveal delay-600">
+                        <div class="text-neon-green text-5xl mb-6 flex items-center justify-center">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="text-2xl font-montserrat font-semibold text-white mb-4">24/7 Expert Support</h3>
+                        <p class="text-gray-300">
+                            Our dedicated team of cybersecurity experts is always available to assist you, day or night.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section id="cta" class="py-16 md:py-24 bg-gradient-to-br from-dark-bg to-black relative">
+            <div class="container mx-auto px-4 text-center scroll-reveal delay-0">
+                <h2 class="text-4xl sm:text-5xl font-montserrat font-bold text-white mb-6">
+                    Ready to Experience <span class="text-neon-green">Unrivaled Protection</span>?
+                </h2>
+                <p class="text-lg sm:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+                    Join thousands who trust Shield to protect their digital lives. Get started with our free trial today.
+                </p>
+                <a href="#" class="inline-block px-12 py-5 bg-neon-green text-dark-bg font-bold text-xl rounded-full shadow-neon-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105">
+                    Claim Your Free Trial
+                    <i class="fas fa-rocket ml-3"></i>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark-bg/80 backdrop-blur-md border-t border-dark-border py-12">
+        <div class="container mx-auto px-4 text-center">
+            <a href="#hero" class="text-3xl font-montserrat font-extrabold text-white animate-glow tracking-tight mb-4 inline-block">
+                systemcheck<span class="text-neon-green">01</span>
+            </a>
+            <p class="text-gray-400 text-sm mt-4">
+                &copy; <span id="current-year"></span> systemcheck01. All rights reserved. Shield Cybersecurity.
+            </p>
+            <div class="flex justify-center space-x-6 mt-8">
+                <a href="#" class="text-gray-400 hover:text-neon-green text-xl transition-colors duration-300" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-neon-green text-xl transition-colors duration-300" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-neon-green text-xl transition-colors duration-300" aria-label="Github">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-neon-green text-xl transition-colors duration-300" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+            <div class="mt-8 text-sm text-gray-500">
+                <a href="#" class="hover:text-neon-green transition-colors duration-300 mx-2">Privacy Policy</a>
+                <span class="mx-2">|</span>
+                <a href="#" class="hover:text-neon-green transition-colors duration-300 mx-2">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for interactivity -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                const navbar = document.querySelector('header');
+                const navbarHeight = navbar ? navbar.offsetHeight : 0; // Get dynamic navbar height
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - navbarHeight - 20, // Adjust scroll position for fixed header with some padding
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Current year for footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                mobileMenuButton.querySelector('i').classList.toggle('fa-bars');
+                mobileMenuButton.querySelector('i').classList.toggle('fa-times'); // Change icon to 'X'
+                // Optional: prevent body scroll when mobile menu is open
+                document.body.classList.toggle('overflow-hidden');
+            });
+
+            // Close mobile menu when a link is clicked
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuButton.querySelector('i').classList.remove('fa-times');
+                    mobileMenuButton.querySelector('i').classList.add('fa-bars');
+                    document.body.classList.remove('overflow-hidden');
+                });
+            });
+        }
+
+        // Scroll reveal animation using Intersection Observer
+        const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
+
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Extract delay from class names, e.g., 'delay-100' -> 100
+                    const delayClass = Array.from(entry.target.classList).find(cls => cls.startsWith('delay-'));
+                    const delay = delayClass ? parseInt(delayClass.split('-')[1]) : 0;
+                    
+                    setTimeout(() => {
+                        entry.target.classList.add('is-visible');
+                    }, delay);
+                    observer.unobserve(entry.target); // Stop observing once animated
+                }
+            });
+        }, observerOptions);
+
+        scrollRevealElements.forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
